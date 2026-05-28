@@ -1,26 +1,63 @@
-class Solution {
-public:
-    // 计算满足 check(x) == true 的最小整数 x
-    int binarySearchMin(vector<int>& nums) {
-        // 二分猜答案：判断 mid 是否满足题目要求
-        auto check = [&](int mid) -> bool {
-            
-        };
+#include <bits/stdc++.h>
+using namespace std;
 
-        int left = ; // 循环不变量：check(left) 恒为 false
-        int right = ; // 循环不变量：check(right) 恒为 true
-        while (left + 1 < right) { // 开区间不为空
-            int mid = left + (right - left) / 2;
-            if (check(mid)) { // 说明 check(>= mid 的数) 均为 true
-                right = mid; // 接下来在 (left, mid) 中二分答案
-            } else { // 说明 check(<= mid 的数) 均为 false
-                left = mid; // 接下来在 (mid, right) 中二分答案
+using ll = long long;
+
+ll X;
+ll best;
+vector<pair<ll, int>> factors;
+
+void dfs(int idx, ll cur) {
+    if (idx == factors.size()) {
+        if (cur > X) {
+            best = min(best, cur);
+        }
+        return;
+    }
+
+    auto [p, e] = factors[idx];
+
+    ll val = 1;
+    for (int i = 0; i <= 2 * e; i++) {
+        dfs(idx + 1, cur * val);
+        val *= p;
+    }
+}-
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int T;
+    cin >> T;
+
+    while (T--) {
+        cin >> X;
+
+        factors.clear();
+
+        ll n = X;
+        for (ll i = 2; i * i <= n; i++) {
+            if (n % i == 0) {
+                int cnt = 0;
+                while (n % i == 0) {
+                    n /= i;
+                    cnt++;
+                }
+                factors.push_back({i, cnt});
             }
         }
-        // 循环结束后 left+1 = right
-        // 此时 check(left) == false 而 check(left+1) == check(right) == true
-        // 所以 right 就是最小的满足 check 的值
-        return right;
-    }
-};
 
+        if (n > 1) {
+            factors.push_back({n, 1});
+        }
+
+        best = X * X;
+
+        dfs(0, 1);
+
+        cout << best - X << '\n';
+    }
+
+    return 0;
+}
